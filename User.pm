@@ -16,7 +16,8 @@ sub new {
 sub create_user {
 	my $self = shift;
 	my $username = shift;
-	my $location = shift;
+	my $region = shift; #Country/US-State
+	my $city = shift; #City
 	my $preferred_genres = shift;
 
 	my $schema = MovieSuggest::Schema->get_schema;
@@ -33,10 +34,11 @@ sub create_user {
 		return "user already exists";
 	}
 
-	#Check location is already populated, get its id or create it
-	my $location = $location_rs->find_or_create( 
-		{ description => $location}, {key => "description"} 	
-	);
+	#Check location is already populated, get or create it
+	my $location = $location_rs->search({region => $region, city => $city},{ rows => 1})->single;
+	if (!$location) {
+		$location = $location_rs->create({region => $region, city => $city});
+	}
 
 	#Create user
 	my $user = $user_rs->create(
