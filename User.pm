@@ -1,5 +1,7 @@
 package User;
 
+use strict;
+
 use MovieSuggest::Schema;
 
 use Data::Dumper;
@@ -27,10 +29,8 @@ sub create_user {
 	my $user_genre_rs = $schema->resultset('UserGenres');
 
 	#First check username does not already exists
-	my @users = $user_rs->search( 
-		{ username => $username}, {columns => "username"}
-	);
-	if (scalar @users > 0) {
+	my $user = $user_rs->search( { username => $username}, {rows => 1})->single;
+	if ($user) {
 		return "user already exists";
 	}
 
