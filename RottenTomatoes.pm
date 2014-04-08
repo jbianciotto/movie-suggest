@@ -14,7 +14,7 @@ use constant ROTTEN_TOMATO_KEY => "22p76ydnu5kngebtqt9zpm47";
 use constant ROTTEN_TOMATO_MOVIE_BASE_URL => 
 	"http://api.rottentomatoes.com/api/public/v1.0/movies/";
 use constant ROTTEN_TOMATO_MOVIES_BASE_URL => 
-	"http://api.rottentomatoes.com/api/public/v1.0/lists/movies/";
+	"http://api.rottentomatoes.com/api/public/v1.0/lists/movies/in_theaters.json?page_limit=50&country=us";
 
 
 sub new {
@@ -26,8 +26,6 @@ sub new {
 	return $self;
 }
 
-
-#TODO: paginar los request, solo devuelve hasta 50
 sub get_all_movies {
 	my $self = shift;
 
@@ -37,10 +35,9 @@ sub get_all_movies {
 	my $movie_rs = $schema->resultset('Movie');
 	my $genres_rs = $schema->resultset('Genres');
 
-#TODO: cambiar nombre de movies_json
-	my $movies_json = $self->all_movies_request;
-	foreach my $movie_json (@{$movies_json->{movies}}) {
-		my $movie_id = $movie_json->{id};
+	my @raw_movies = $self->all_movies_request;
+	foreach my $movie (@raw_movies) {
+		my $movie_id = $movie->{id};
 		my $movie_info;
 
 		#Movie info lookup
@@ -66,12 +63,7 @@ sub get_all_movies {
 			}
 		}
 
-
-		my $movie = Movie->new($movie_info);
-
-		push @movies, $movie;
-		print Dumper($movie);
-#		last;
+		push @movies, Movie->new($movie_info);
 	}
 
 	return \@movies;
@@ -95,15 +87,24 @@ sub single_movie_request {
 sub all_movies_request {
 	my $self = shift;
 
+	my @movies;
+	
 	my $url = ROTTEN_TOMATO_MOVIES_BASE_URL;
-	$url .= "in_theaters.json?apikey=".ROTTEN_TOMATO_KEY."&page_limit=50";
 
-	my $response = Request->new->do_request($url);
-	if ($response !~ /^ERROR/) {
+	do {
+
+		$url .= "&apikey=".ROTTEN_TOMATO_KEY;
+
+		my $response = Request->new->do_request($url);
 		$response = JSON::Syck::Load($response);
-	}
 
-	return $response;
+		push @movies, @{$response->{movies}};
+
+		$url =  $response->{links}->{next};
+
+	} while ($url); 
+
+	return @movies;
 }
 
 1;

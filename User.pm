@@ -51,7 +51,7 @@ sub create_user {
 			{description => $preferred_genre}, {key => "description"}
 		);
 
-		$user_genre_rs->create({user_id => $user->id, genre_id => $genre->id});
+		$user->add_to_genres($genre);
 	}
 
 	return 1;

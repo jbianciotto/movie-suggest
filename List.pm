@@ -25,7 +25,6 @@ sub get_suggestions {
 	my $schema = MovieSuggest::Schema->get_schema;
 	my $user_rs = $schema->resultset('User');
 
-	my @list;
 
 	my $user = $user_rs->find({username => $username}, {key => "username"});
 
@@ -53,7 +52,20 @@ sub get_suggestions {
 	my $movies = RottenTomatoes->new->get_all_movies;
 
 	#7) Filter movies that match user genres
-	foreach my $genre (@genres) {
+	my $list = $self->filter_movies($movies, \@genres);
+
+  	$self->save_history($user,$conditions,$list);
+	return $list;
+}
+
+sub filter_movies {
+	my $self = shift;
+	my $movies = shift;
+	my $genres = shift;
+
+	my @list;
+
+	foreach my $genre (@$genres) {
 		foreach my $movie (@$movies) {
 			if ( $movie->is_of_genre($genre) ) {
 				push @list, {movie_id => $movie->id, title => $movie->title};
@@ -61,8 +73,7 @@ sub get_suggestions {
 			}
 		}
 	}
- 
-  	$self->save_history($user,$conditions,\@list);
+
 	return \@list;
 }
 
