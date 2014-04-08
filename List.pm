@@ -19,15 +19,15 @@ sub new {
 
 
 sub get_suggestions {
-	my ($self, $user) = @_;
-	print "Fetching suggestions for user: $user\n";
+	my ($self, $username) = @_;
+	print "Fetching suggestions for user: $username\n";
 
 	my $schema = MovieSuggest::Schema->get_schema;
 	my $user_rs = $schema->resultset('User');
 
-	my $list = {};
+	my @list;
 
-	my $user = $user_rs->find({username => $user}, {key => "username"});
+	my $user = $user_rs->find({username => $username}, {key => "username"});
 
 	#1) Get user location
 	my $location = $user->location;
@@ -56,14 +56,74 @@ sub get_suggestions {
 	foreach my $genre (@genres) {
 		foreach my $movie (@$movies) {
 			if ( $movie->is_of_genre($genre) ) {
-				$list->{$movie->id} = $movie->title;
+				push @list, {movie_id => $movie->id, title => $movie->title};
 				next;
 			}
 		}
 	}
  
- print "LIST:".Dumper($list);
-	return $list;
+  	$self->save_history($user,$conditions,\@list);
+	return \@list;
 }
+
+sub get_history {
+	my $self = shift;
+	my $username = shift;
+
+	my $schema = MovieSuggest::Schema->get_schema;
+
+	my $user_rs = $schema->resultset('User');
+	my $user = $user_rs->find({username => $username}, {key => "username"});
+
+	my $history_rs = $schema->resultset('History');
+	my $histories = $history_rs->search({ user_id => $user->id});
+
+	my $rv = { 
+		username => $username,
+		history => []
+	};
+	foreach my $history ($histories->all) {
+		my $hash = {};
+		$hash->{id} = $history->id;
+		$hash->{weather} = $history->weather;
+		$hash->{date} = $history->date;
+		$hash->{movies} = [];
+
+#		print Dumper($history->movies);
+		foreach my $movie ( $history->movies) {
+			push @{$hash->{movies}}, {id =>$movie->movie_id, title => $movie->title};
+		}
+
+		push @{$rv->{history}}, $hash;
+	}
+
+	return $rv;
+}
+
+sub save_history {
+	my $self = shift;
+	my $user = shift;
+	my $conditions = shift;
+	my $list = shift;
+
+	my $weather = $conditions->{weather}."/".$conditions->{temperature};
+#print Dumper([$user, $conditions, $list]);
+	my $schema = MovieSuggest::Schema->get_schema;
+	my $history_rs = $schema->resultset('History');
+	my $history_row = $history_rs->create({
+		user_id => $user->id,
+		weather => $weather,
+	});
+
+	my $movie_rs = $schema->resultset('Movie');
+	foreach my $movie (@$list) {
+		my $movie_row = $movie_rs->find_or_create($movie, {key => "movie_id"});
+		$movie_row->add_to_historical($history_row);
+	}
+
+	return;
+}
+
+
 
 1;
