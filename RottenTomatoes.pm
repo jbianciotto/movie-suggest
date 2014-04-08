@@ -33,10 +33,39 @@ sub get_all_movies {
 
 	my @movies;
 
+	my $schema = MovieSuggest::Schema->get_schema;
+	my $movie_rs = $schema->resultset('Movie');
+	my $genres_rs = $schema->resultset('Genres');
+
+#TODO: cambiar nombre de movies_json
 	my $movies_json = $self->all_movies_request;
 	foreach my $movie_json (@{$movies_json->{movies}}) {
+		my $movie_id = $movie_json->{id};
+		my $movie_info;
 
-		my $movie_info = $self->single_movie_request($movie_json->{id});
+		#Movie info lookup
+		my $movie_row = $movie_rs->find({movie_id => $movie_id}, {key => "movie_id"});
+		if ($movie_row) {
+			#Info found
+			my @genres = map {$_->description} $movie_row->genres;
+			$movie_info = {
+				id => $movie_row->movie_id, 
+				title => $movie_row->title, 
+				genres => \@genres
+			};
+		} else {
+			#Info not found
+			$movie_info = $self->single_movie_request($movie_id);
+
+			#Store for future lookups
+			$movie_row = $movie_rs->create({movie_id => $movie_info->{id}, title => $movie_info->{title}});
+
+			foreach my $genre (@{$movie_info->{genres}}) {
+				my $genre_row = $genres_rs->find_or_create({description => $genre},{key => "description"});
+				$movie_row->add_to_genres($genre_row);
+			}
+		}
+
 
 		my $movie = Movie->new($movie_info);
 
