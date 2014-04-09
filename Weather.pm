@@ -19,25 +19,25 @@ use constant RAINY => "Rainy";
 use constant SNOWY => "Snowy";
 
 use constant CONDITIONS_MAPPING => {
-	CLEAR() => {
-		HOT() => [ "Action", "Comedy"],
-		REGULAR() => ["Action"],
-		COLD() => ["Comedy"]
+	Clear => {
+		Hot => ["Action & Adventure", "Art House & International", "Comedy"],
+		Regular => ["Animation", "Drama", "Classics", "Science Fiction & Fantasy"],
+		Cold => ["Action & Adventure", "Documentary", "Science Fiction & Fantasy"]
 	},
-	CLOUDY() => {
-		HOT() => [ "Action", "Comedy"],
-		REGULAR() => ["Action & Adventure"],
-		COLD() => ["Comedy"]
+	Cloudy => {
+		Hot => ["Action & Adventure", "Comedy", "Kids & Family", ],
+		Regular => ["Animation", "Classics", "Kids & Family", "Science Fiction & Fantasy"],
+		Cold => ["Action & Adventure", "Horror", "Documentary", "Mystery & Suspense"]
 	},
-	RAINY() => {
-		HOT() => [ "Action", "Comedy"],
-		REGULAR() => ["Action", "Romantic"],
-		COLD() => ["Comedy"]
+	Rainy => {
+		Hot => [ "Action", "Comedy", "Drama"],
+		Regular => ["Action", "Romantic", "Horror", "Classics", "Drama"],
+		Cold => ["Romance", "Faith & Spirituality", "Drama", "Mystery & Suspense"]
 	},
-	SNOWY => {
-		HOT => [ "Action", "Comedy"],
-		REGULAR => ["Action"],
-		COLD => ["Comedy"]
+	Snowy => {
+		Hot => [ "Action", "Comedy", "Musical & Performing Arts"],
+		Regular => ["Action", "Art House & International", "Musical & Performing Arts"],
+		Cold => ["Romance", "Faith & Spirituality", "Musical & Performing Arts"]
 	}
 };
 
