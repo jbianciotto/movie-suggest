@@ -57,5 +57,27 @@ sub create_user {
 	return 1;
 }
 
+sub update_location {
+	my $self = shift;
+	my $username = shift;
+	my $region = shift;
+	my $city = shift;
+
+	my $schema = MovieSuggest::Schema->get_schema;
+	my $user_rs = $schema->resultset('User');
+	my $user = $user_rs->find({username => $username},{key => "username"});
+
+	my $location_rs = $schema->resultset('Location');
+
+	#Check location is already populated, get or create it
+	my $location = $location_rs->search({region => $region, city => $city},{ rows => 1})->single;
+	if (!$location) {
+		$location = $location_rs->create({region => $region, city => $city});
+	}
+
+	$user->update({location => $location->id});
+
+	return 1;
+}
 
 1;
