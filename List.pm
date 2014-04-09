@@ -118,7 +118,7 @@ sub save_history {
 	my $list = shift;
 
 	my $weather = $conditions->{weather}."/".$conditions->{temperature};
-#print Dumper([$user, $conditions, $list]);
+
 	my $schema = MovieSuggest::Schema->get_schema;
 	my $history_rs = $schema->resultset('History');
 	my $history_row = $history_rs->create({
