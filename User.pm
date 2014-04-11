@@ -31,7 +31,7 @@ sub create_user {
 	#First check username does not already exists
 	my $user = $user_rs->search( { username => $username}, {rows => 1})->single;
 	if ($user) {
-		return "user already exists";
+		return { error => "An user with that username already exists"};
 	}
 
 	#Check location is already populated, get or create it
@@ -40,21 +40,23 @@ sub create_user {
 		$location = $location_rs->create({region => $region, city => $city});
 	}
 
+	my $error = $self->check_genres($genre_rs, $preferred_genres);
+	return $error if ($error);
+	
 	#Create user
 	my $user = $user_rs->create(
 		{ username => $username, location => $location->id }
 	);
 
-	#Check genres, get ids or create them
+	#Add genres
 	foreach my $preferred_genre (@$preferred_genres) {
-		my $genre = $genre_rs->find_or_create(
+		my $genre = $genre_rs->find(
 			{description => $preferred_genre}, {key => "description"}
 		);
-
 		$user->add_to_genres($genre);
 	}
 
-	return 1;
+	return $self->get_user_info($user);
 }
 
 sub update_location {
@@ -77,7 +79,68 @@ sub update_location {
 
 	$user->update({location => $location->id});
 
-	return 1;
+	return $self->get_user_info($user);
+}
+
+sub update_genres {
+	my $self = shift;
+	my $username = shift;
+	my $genres = shift;
+
+	my $schema = MovieSuggest::Schema->get_schema;
+	my $user_rs = $schema->resultset('User');
+	my $genre_rs = $schema->resultset('Genres');
+
+	my $user = $user_rs->search( { username => $username}, {rows => 1})->single;
+	unless ($user) {
+		return { error => "Invalid user provided"};
+	}
+
+	my $error = $self->check_genres($genre_rs, $genres);
+	return $error if ($error);
+	
+	my @new_genres = $genre_rs->search({ description => { '-in' => $genres }});
+	$user->set_genres(\@new_genres);
+
+	return $self->get_user_info($user);
+}
+
+
+sub get_user_info {
+	my $self = shift;
+	my $user = shift;
+
+	my $user_info = { 
+		username => $user->username, 
+		location => {
+			"country/state" => $user->location->region,
+			city => $user->location->city
+		},
+		preferred_genres => [ map {$_->description} $user->genres ]
+	};
+
+	return $user_info;
+}
+
+sub check_genres {
+	my $self = shift;
+	my $genre_rs = shift;
+	my $genres = shift;
+
+	#Check genres are valid
+	foreach my $genre (@$genres) {
+		my $genre_row = $genre_rs->find(
+			{description => $genre}, {key => "description"}
+		);
+		if (!$genre_row) {
+			return { 
+				error => 'Invalid genre ("'.$genre.'") provided',
+				valid_genres => [map {$_->description} $genre_rs->all]
+			};
+		}
+	}
+
+	return undef;
 }
 
 1;

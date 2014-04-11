@@ -8,7 +8,7 @@ use Data::Dumper;
 
 use constant WHEATER_UNDERGROUND_KEY => "a3cd20ad7931f73f";
 use constant WHEATER_CONDITION_BASE_URL => 
-	"http://api.wunderground.com/api/".WHEATER_UNDERGROUND_KEY."/conditions/q/";
+	"http://api.wunderground.com/api/".WHEATER_UNDERGROUND_KEY."/conditions";
 
 use constant HOT => "Hot";
 use constant REGULAR => "Regular";
@@ -66,16 +66,22 @@ sub weather_request {
 	my $self = shift;
 	my $location = shift;
 
-	print "Fetching weather conditions in ".$location->region."/".$location->city."\n";
+	print STDERR "Fetching weather conditions in ".$location->region."/".$location->city."\n";
 
-	my $url = WHEATER_CONDITION_BASE_URL;
-	$url .= $location->region ."/".$location->city.".json"; 
+	my $base_url = WHEATER_CONDITION_BASE_URL;
+	my $url = $base_url . "/q/".$location->region ."/".$location->city.".json"; 
 
 	my $response = Request->new->do_request($url);
 
 	my $conditions;
 	if ($response !~ /^ERROR/) {
 		my $json_response = JSON::Syck::Load($response);
+		if ($json_response->{response}->{results}) {
+			#API returned more than 1 result for the location, get the 1st one
+			$url = $base_url . $json_response->{response}->{results}->[0]->{l}.".json";
+			$response = Request->new->do_request($url);
+			$json_response = JSON::Syck::Load($response);
+		}
 		# print Dumper($json_response);
 		if ($json_response->{response}->{error}) {
 			$conditions = "ERROR: ".$json_response->{response}->{error}->{description};

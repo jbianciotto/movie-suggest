@@ -51,4 +51,14 @@ sub is_of_genre {
 	return 0;
 }
 
+sub format_movie_info {
+	my $self = shift;
+
+	return {
+			movie_id => $self->{ID},
+			title => $self->{TITLE},
+			genres => $self->{GENRES}
+	};
+}
+
 1;

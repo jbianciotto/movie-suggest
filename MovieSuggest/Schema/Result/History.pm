@@ -4,7 +4,7 @@ package MovieSuggest::Schema::Result::History;
 use base qw/DBIx::Class::Core/;
 
 __PACKAGE__->table('suggestions_history');
-__PACKAGE__->add_columns(qw/id user_id weather date/);
+__PACKAGE__->add_columns(qw/id user_id weather temperature date/);
 __PACKAGE__->set_primary_key('id');
 #__PACKAGE__->add_unique_constraint( username => [ qw/username/ ] );
 
