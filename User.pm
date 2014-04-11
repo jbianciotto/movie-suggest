@@ -4,8 +4,6 @@ use strict;
 
 use MovieSuggest::Schema;
 
-use Data::Dumper;
-
 sub new {
 	my $class = shift;
 	my $self = {};

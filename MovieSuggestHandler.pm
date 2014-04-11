@@ -3,8 +3,6 @@ package MovieSuggestHandler;
 use strict;
 use warnings; 
   
-use lib "/home/javier/workspace/movie-suggest/";
-
 use Apache2::RequestRec ();
 use Apache2::RequestIO ();
 

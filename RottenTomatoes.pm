@@ -3,12 +3,9 @@ package RottenTomatoes;
 use strict;
 
 use JSON::Syck;
-use Data::Dumper;
-
 
 use Request;
 use Movie;
-
 
 use constant ROTTEN_TOMATO_KEY => "22p76ydnu5kngebtqt9zpm47";
 use constant ROTTEN_TOMATO_MOVIE_BASE_URL => 

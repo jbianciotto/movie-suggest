@@ -6,9 +6,6 @@ use HTTP::Request;
 use LWP::UserAgent;
 use JSON::Syck;
 
-use Data::Dumper;
-
-
 sub new {
 	my $class = shift;
 	my $self = {};

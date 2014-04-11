@@ -4,8 +4,6 @@ use strict;
 
 use Request;
 
-use Data::Dumper;
-
 use constant WHEATER_UNDERGROUND_KEY => "a3cd20ad7931f73f";
 use constant WHEATER_CONDITION_BASE_URL => 
 	"http://api.wunderground.com/api/".WHEATER_UNDERGROUND_KEY."/conditions";
@@ -60,8 +58,6 @@ sub get_conditions {
 	return $conditions;
 }
 
-
-#TODO: check lo que pasa con mas de un resultado (ejemplo: BuenosAires)
 sub weather_request {
 	my $self = shift;
 	my $location = shift;
@@ -82,7 +78,7 @@ sub weather_request {
 			$response = Request->new->do_request($url);
 			$json_response = JSON::Syck::Load($response);
 		}
-		# print Dumper($json_response);
+
 		if ($json_response->{response}->{error}) {
 			$conditions = "ERROR: ".$json_response->{response}->{error}->{description};
 		} else {

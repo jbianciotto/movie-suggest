@@ -25,7 +25,6 @@ sub get_suggestions {
 	my $schema = MovieSuggest::Schema->get_schema;
 	my $user_rs = $schema->resultset('User');
 
-
 	my $user = $user_rs->find({username => $username}, {key => "username"});
 
 	#1) Get user location
