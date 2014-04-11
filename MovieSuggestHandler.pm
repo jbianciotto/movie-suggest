@@ -12,9 +12,6 @@ use Apache2::Const -compile => qw(OK);
 
 use URL::Encode qw(url_params_mixed);
 
-use URL::Encode qw(url_params_mixed);
-
-use Data::Dumper;
 use JSON::Syck;
 use List;
 use User;
@@ -27,13 +24,12 @@ sub handler {
 
   	my $uri = $r->uri;
   	my $args = url_params_mixed($r->args);
-    print STDERR Dumper($args);
 
-  	if ($uri =~ /\/createuser$/) {
+  	if ($uri =~ /\/create_user$/) {
   		$response = create_user($args);
-  	} elsif ($uri =~ /\/update\_location$/) {
-  		$response = "Change location";
-    } elsif ($uri =~ /\/update\_genres$/) {
+  	} elsif ($uri =~ /\/update_location$/) {
+  		$response = update_location($args);
+    } elsif ($uri =~ /\/update_genres$/) {
         $response = update_genres($args);
   	} elsif ($uri =~ /\/suggest$/) {
   		$response = get_suggestions($args);
@@ -107,6 +103,22 @@ sub update_genres {
 
     my $user = User->new;
     my $response = $user->update_genres($username, $genres);
+    return $response;
+}
+
+sub update_location {
+    my $args = shift;
+
+    my $username = $args->{username};
+    my $region = $args->{region};
+    my $city = $args->{city};
+
+    return { error => "You must provide an username" } unless $username;
+    return { error => "You must provide a country/US state" } unless $region;
+    return { error => "You must provide a city" } unless $city;
+
+    my $user = User->new;
+    my $response = $user->update_location($username, $region, $city);
     return $response;
 }
 

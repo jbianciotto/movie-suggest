@@ -77,7 +77,8 @@ sub update_location {
 		$location = $location_rs->create({region => $region, city => $city});
 	}
 
-	$user->update({location => $location->id});
+	$user->location($location);
+	$user->update();
 
 	return $self->get_user_info($user);
 }
