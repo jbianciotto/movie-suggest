@@ -1,1 +1,1 @@
-PerlRequire /home/javier/workspace/movie-suggest/startup.pl
+PerlRequire /home/javier/workspace/movie-suggest/apache/startup.pl
