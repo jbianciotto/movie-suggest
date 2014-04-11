@@ -56,7 +56,7 @@ sub create_user {
     $genres = [$genres] if (!ref($genres));
 
     return { error => "You must provide an username" } unless $username;
-    return { error => "You must provide a country/US state" } unless $region;
+    return { error => "You must provide a region(country/US state)" } unless $region;
     return { error => "You must provide a city" } unless $city;
     return { error => "You must provide at least one preferred genre" } unless (scalar @$genres > 0);
 
@@ -112,7 +112,7 @@ sub update_location {
     my $city = $args->{city};
 
     return { error => "You must provide an username" } unless $username;
-    return { error => "You must provide a country/US state" } unless $region;
+    return { error => "You must provide a region(country/US state)" } unless $region;
     return { error => "You must provide a city" } unless $city;
 
     my $user = User->new;

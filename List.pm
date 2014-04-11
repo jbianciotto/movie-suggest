@@ -18,9 +18,13 @@ sub new {
 	return $self;
 }
 
+#Method: get_suggestions
+#Arguments: $username
+#Return: \%movies_list
+#Return the suggestions list for the username provided in a suitable format 
+#for the top level handler
 sub get_suggestions {
 	my ($self, $username) = @_;
-	print STDERR "Fetching suggestions for user: $username\n";
 
 	my $schema = MovieSuggest::Schema->get_schema;
 	my $user_rs = $schema->resultset('User');
@@ -32,81 +36,31 @@ sub get_suggestions {
 
 	#2) Grab user preferred genres
 	my @user_genres = map {$_->description} $user->genres;
-	print STDERR "user genres:".Dumper(\@user_genres);
 
 	#3) Grab weather conditions
 	my $conditions = Weather->new->get_conditions($location);
-	print STDERR "Condition:".Dumper($conditions);
 
 	#4) Get matching genres for conditions
 	my @condition_genres = Weather->matching_genres($conditions);
-	print STDERR "conditions genres:".Dumper(\@condition_genres);
 
 	#5) Intersect user and weather genres
 	my %user_genres=map{$_ =>1} @user_genres;
 	my @genres = grep( $user_genres{$_}, @condition_genres);
-	print STDERR "matching genres:".Dumper(\@genres);
 
 	#6) Get movies 
-	my $movies_list = $self->get_movies(\@genres);
+	my $movies_list = $self->__get_movies(\@genres);
 
-  	$self->save_history($user,$conditions,$movies_list);
+	#7) Save historical data
+  	$self->__save_history($user,$conditions,$movies_list);
 
-	return $self->format_movies_response($movies_list, \@genres, $conditions);
+  	#8) Return formatted suggestions
+	return $self->__format_movies_response($movies_list, \@genres, $conditions);
 }
 
-sub format_movies_response {
-	my $self = shift;
-	my $movie_list = shift;
-	my $genres = shift;
-	my $conditions = shift;
-
-	my $response = {
-		conditions => {
-			temperature => $conditions->{temperature},
-			weather => $conditions->{weather}
-		},
-		matched_genres => $genres,
-		results => {
-			count => scalar @$movie_list,
-			movies => $movie_list
-		}
-	};
-
-	return $response;
-}
-
-sub get_movies {
-	my $self = shift;
-	my $genres = shift;
-
-	my $rotten = RottenTomatoes->new;
-	my $movies = $rotten->get_all_movies;
-	my $movies_list = $self->filter_movies($movies, $genres);
-	
-	return $movies_list;
-}
-
-
-sub filter_movies {
-	my $self = shift;
-	my $movies = shift;
-	my $genres = shift;
-
-	my @list;
-
-	foreach my $genre (@$genres) {
-		foreach my $movie (@$movies) {
-			if ( $movie->is_of_genre($genre) ) {
-				push @list, $movie->format_movie_info;
-				next;
-			}
-		}
-	}
-
-	return \@list;
-}
-
+#Method: get_history
+#Arguments: $username
+#Return value: \%history
+#Return the history of request for the given username
 sub get_history {
 	my $self = shift;
 	my $username = shift;
@@ -149,7 +103,80 @@ sub get_history {
 	return $rv;
 }
 
-sub save_history {
+#Method: format_movies_response
+#Arguments: \@movie_list, \@genres, \%conditions
+#Return value: \%movies_list
+#Gets the movie list, matched genres and weather conditions and formats them 
+#into a structure suitable to be returned to the top level handler
+sub __format_movies_response {
+	my $self = shift;
+	my $movie_list = shift;
+	my $genres = shift;
+	my $conditions = shift;
+
+	my $response = {
+		conditions => {
+			temperature => $conditions->{temperature},
+			weather => $conditions->{weather}
+		},
+		matched_genres => $genres,
+		results => {
+			count => scalar @$movie_list,
+			movies => $movie_list
+		}
+	};
+
+	return $response;
+}
+
+#Method: __get_movies
+#Arguments: \@genres
+#Returns: \@movies
+#Gets an array ref of genres, fetches all movies from RottenTomatoes and 
+#returns a movies array ref containing all the movies that match 
+#any of the provided genres
+sub __get_movies {
+	my $self = shift;
+	my $genres = shift;
+
+	my $rotten = RottenTomatoes->new;
+	my $movies = $rotten->get_all_movies;
+	my $movies_list = $self->__filter_movies($movies, $genres);
+	
+	return $movies_list;
+}
+
+#Method: __filter_movies
+#Arguments: \@movies, \@genres
+#Return: \@movie_list
+#Gets an array ref of movies and another one of genres 
+#and returns all the movies in the movies array ref 
+#that are at least of one of the provided genres
+sub __filter_movies {
+	my $self = shift;
+	my $movies = shift;
+	my $genres = shift;
+
+	my @list;
+
+	MOVIE: foreach my $movie (@$movies) {
+		foreach my $genre (@$genres) {
+			if ( $movie->is_of_genre($genre) ) {
+				push @list, $movie->format_movie_info;
+				next MOVIE;
+			}
+		}
+	}
+
+	return \@list;
+}
+
+#Method: __save_history
+#Arguments: $user, \%conditions, \@list
+#Returns: 1
+#Gets the user object, weather conditions hashref and movie list array ref
+#and saves the results into the historical table
+sub __save_history {
 	my $self = shift;
 	my $user = shift;
 	my $conditions = shift;
@@ -169,7 +196,7 @@ sub save_history {
 		$movie_row->add_to_historical($history_row);
 	}
 
-	return;
+	return 1;
 }
 
 

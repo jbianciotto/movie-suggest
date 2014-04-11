@@ -23,6 +23,12 @@ sub new {
 	return $self;
 }
 
+#Method: get_all_movies
+#Arguments: none
+#Returns: \@movies
+#This method grabs in theaters movie list from RottenTomatoes API and either
+#gets their genres from DB or RottenTomatoes API and then return a formatted 
+#movies list
 sub get_all_movies {
 	my $self = shift;
 
@@ -32,8 +38,8 @@ sub get_all_movies {
 	my $movie_rs = $schema->resultset('Movie');
 	my $genres_rs = $schema->resultset('Genres');
 
-	my @raw_movies = $self->all_movies_request;
-	foreach my $movie (@raw_movies) {
+	my $raw_movies = $self->__all_movies_request;
+	foreach my $movie (@$raw_movies) {
 		my $movie_id = $movie->{id};
 		my $movie_info;
 
@@ -49,13 +55,15 @@ sub get_all_movies {
 			};
 		} else {
 			#Info not found
-			$movie_info = $self->single_movie_request($movie_id);
+			$movie_info = $self->__single_movie_request($movie_id);
 
 			#Store for future lookups
 			$movie_row = $movie_rs->create({movie_id => $movie_info->{id}, title => $movie_info->{title}});
 
 			foreach my $genre (@{$movie_info->{genres}}) {
-				my $genre_row = $genres_rs->find_or_create({description => $genre},{key => "description"});
+				my $genre_row = $genres_rs->find_or_create(
+						{description => $genre},{key => "description"}
+				);
 				$movie_row->add_to_genres($genre_row);
 			}
 		}
@@ -66,14 +74,19 @@ sub get_all_movies {
 	return \@movies;
 }
 
-sub single_movie_request {
+#Method: __single_movie_request
+#Arguments: $movie_id
+#Returns \%movie_json
+#Makes a request to RottenTomatoes to get a single movie data and returns 
+#a hash ref with its information
+sub __single_movie_request {
 	my $self = shift;
 	my $movie_id = shift;
 
 	my $url = ROTTEN_TOMATO_MOVIE_BASE_URL;
 	$url .= $movie_id.".json?apikey=".ROTTEN_TOMATO_KEY;
 
-	my $response = Request->new->do_request($url);
+	my $response = Request->get($url);
 	if ($response !~ /^ERROR/) {
 		$response = JSON::Syck::Load($response);
 	}
@@ -81,7 +94,12 @@ sub single_movie_request {
 	return $response;
 }
 
-sub all_movies_request {
+#Method: __all_movies_request
+#Arguments: none
+#Returns [ \%movie_json, \%movie_json, ... ]
+#Makes a request to RottenTomatoes to get all movies in theaters data and returns 
+#an array of hash refs with each movie information
+sub __all_movies_request {
 	my $self = shift;
 
 	my @movies;
@@ -92,7 +110,7 @@ sub all_movies_request {
 
 		$url .= "&apikey=".ROTTEN_TOMATO_KEY;
 
-		my $response = Request->new->do_request($url);
+		my $response = Request->get($url);
 		$response = JSON::Syck::Load($response);
 
 		push @movies, @{$response->{movies}};
@@ -101,7 +119,7 @@ sub all_movies_request {
 
 	} while ($url); 
 
-	return @movies;
+	return \@movies;
 }
 
 1;
