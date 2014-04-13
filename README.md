@@ -37,28 +37,28 @@ API Specifications:
 -----------
 
 * User creation 
-	/movie-suggest/create_user
-	Arguments: username, region, city, genre, [genre...]
-	Creates an user and registers its location and preferred genres
+	/movie-suggest/create_user  
+	Arguments: username, region, city, genre, [genre...]  
+	Creates an user and registers its location and preferred genres  
 
 * User location update
-	/movie-suggest/update_location
-	Arguments: username, region, city
-	Updates location for the provided user
+	/movie-suggest/update_location  
+	Arguments: username, region, city 
+	Updates location for the provided user 
 
 * User genres update
-	/movie-suggest/update_genres
-	Arguments: username, genre, [genre...]
-	Updates the preferred genres for the provided user
+	/movie-suggest/update_genres  
+	Arguments: username, genre, [genre...]  
+	Updates the preferred genres for the provided user  
 
 * Get movies suggestions
-	/movie-suggest/suggest
-	Arguments: username
-	Obtains the movies suggestions for the provided user
+	/movie-suggest/suggest  
+	Arguments: username  
+	Obtains the movies suggestions for the provided user  
 
 * Get suggestions history
-	/movie-suggest/history
-	Arguments: username
-	Obtains the history of movies suggestions given to the provided user
+	/movie-suggest/history  
+	Arguments: username 
+	Obtains the history of movies suggestions given to the provided user  
 
 
