@@ -87,9 +87,7 @@ sub __single_movie_request {
 	$url .= $movie_id.".json?apikey=".ROTTEN_TOMATO_KEY;
 
 	my $response = Request->get($url);
-	if ($response !~ /^ERROR/) {
-		$response = JSON::Syck::Load($response);
-	}
+	$response = JSON::Syck::Load($response);
 
 	return $response;
 }

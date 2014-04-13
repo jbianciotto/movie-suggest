@@ -19,7 +19,7 @@ sub get {
     if ($response->is_success) {
         $response = $response->decoded_content;
     } else {
-        $response = "ERROR: ".$response->status_line."\n";
+        $response = '{"response":{"error":"'.$response->status_line.'"}}';
     }
 
 	return $response;

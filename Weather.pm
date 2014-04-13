@@ -55,7 +55,7 @@ sub new {
 #Arguments: $location
 #Returns: \%conditions
 #Queries WeatherUnderground API and returns the weather conditions
-#in the provided location.
+#in the provided location or an error message.
 sub get_conditions {
 	my $self = shift;
 	my $location = shift;
@@ -75,7 +75,7 @@ sub get_conditions {
 
 	my $conditions;
 	if ($json_response->{response}->{error}) {
-		$conditions = "ERROR: ".$json_response->{response}->{error}->{description};
+		$conditions = { error => $json_response->{response}->{error} };
 	} else {
 		$conditions = $self->__format_conditions($json_response->{current_observation});
 	}
