@@ -30,6 +30,7 @@ sub get_suggestions {
 	my $user_rs = $schema->resultset('User');
 
 	my $user = $user_rs->find({username => $username}, {key => "username"});
+	return { error => "User does not exist" } unless ($user);
 
 	#1) Get user location
 	my $location = $user->location;
@@ -40,6 +41,7 @@ sub get_suggestions {
 	#3) Grab weather conditions
 	my $weather = Weather->new;
 	my $conditions = $weather->get_conditions($location);
+	return $conditions if ($conditions->{error});
 
 	#4) Get matching genres for conditions
 	my @condition_genres = $weather->matching_genres($conditions);
@@ -70,6 +72,7 @@ sub get_history {
 
 	my $user_rs = $schema->resultset('User');
 	my $user = $user_rs->find({username => $username}, {key => "username"});
+	return { error => "User does not exist" } unless ($user);
 
 	my $history_rs = $schema->resultset('History');
 	my $histories = $history_rs->search({ user_id => $user->id});
