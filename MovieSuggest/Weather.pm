@@ -1,8 +1,8 @@
-package Weather;
+package MovieSuggest::Weather;
 
 use strict;
 
-use Request;
+use MovieSuggest::Request;
 
 use constant WHEATER_UNDERGROUND_KEY => "a3cd20ad7931f73f";
 use constant WHEATER_CONDITION_BASE_URL => 
@@ -63,13 +63,13 @@ sub get_conditions {
 	my $base_url = WHEATER_CONDITION_BASE_URL;
 	my $url = $base_url . "/q/".$location->region ."/".$location->city.".json"; 
 
-	my $response = Request->get($url);
+	my $response = MovieSuggest::Request->get($url);
 
 	my $json_response = JSON::Syck::Load($response);
 	if ($json_response->{response}->{results}) {
 		#API returned more than 1 result for the location, get the 1st one
 		$url = $base_url . $json_response->{response}->{results}->[0]->{l}.".json";
-		$response = Request->get($url);
+		$response = MovieSuggest::Request->get($url);
 		$json_response = JSON::Syck::Load($response);
 	}
 

@@ -1,13 +1,10 @@
-package Suggestions;
+package  MovieSuggest::Suggestions;
 
 use strict;
 
 use MovieSuggest::Schema;
-use Weather;
-use RottenTomatoes;
-use DateTime;
-
-use Data::Dumper;
+use MovieSuggest::Weather;
+use MovieSuggest::RottenTomatoes;
 
 sub new {
 	my $class = shift;
@@ -39,7 +36,7 @@ sub get_suggestions {
 	my @user_genres = map {$_->description} $user->genres;
 
 	#3) Grab weather conditions
-	my $weather = Weather->new;
+	my $weather = MovieSuggest::Weather->new;
 	my $conditions = $weather->get_conditions($location);
 	return $conditions if ($conditions->{error});
 
@@ -90,7 +87,7 @@ sub get_history {
 		$history_hash->{movies} = [];
 
 		foreach my $movie ( $history->movies) {
-			my $movie_info = Movie->new({
+			my $movie_info = MovieSuggest::Movie->new({
 								id => $movie->movie_id, 
 								title => $movie->title, 
 								genres => [map {$_->description} $movie->genres]
@@ -143,7 +140,7 @@ sub __get_movies {
 	my $self = shift;
 	my $genres = shift;
 
-	my $rotten = RottenTomatoes->new;
+	my $rotten = MovieSuggest::RottenTomatoes->new;
 	my $movies = $rotten->get_all_movies;
 	my $movies_list = $self->__filter_movies($movies, $genres);
 	

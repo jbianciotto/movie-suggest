@@ -10,9 +10,11 @@ use Apache2::Const -compile => qw(OK);
 
 use URL::Encode qw(url_params_mixed);
 
+use DateTime;
 use JSON::Syck;
-use Suggestions;
-use User;
+
+use MovieSuggest::Suggestions;
+use MovieSuggest::User;
 
 
 sub handler {
@@ -60,7 +62,7 @@ sub create_user {
     return { error => "You must provide a city" } unless $city;
     return { error => "You must provide at least one preferred genre" } unless (scalar @$genres > 0);
 
-    my $user = User->new;
+    my $user = MovieSuggest::User->new;
     my $response = $user->create_user($username, $region, $city, $genres);
     return $response;
 }
@@ -71,7 +73,7 @@ sub get_history {
     my $username = $args->{username};
     return { error => "You must provide an username" } unless $username;
 
-    my $suggestions = Suggestions->new;
+    my $suggestions = MovieSuggest::Suggestions->new;
     my $response = $suggestions->get_history($username);
 
     return $response;
@@ -83,7 +85,7 @@ sub get_suggestions {
     my $username = $args->{username};
     return { error => "You must provide an username" } unless $username;
 
-	my $suggestions = Suggestions->new;
+	my $suggestions = MovieSuggest::Suggestions->new;
 	my $response = $suggestions->get_suggestions($username);
 
     return $response;
@@ -99,7 +101,7 @@ sub update_genres {
     return { error => "You must provide an username" } unless $username;
     return { error => "You must provide at least one preferred genre" } unless (scalar @$genres > 0);
 
-    my $user = User->new;
+    my $user = MovieSuggest::User->new;
     my $response = $user->update_genres($username, $genres);
     return $response;
 }
@@ -115,7 +117,7 @@ sub update_location {
     return { error => "You must provide a region(country/US state)" } unless $region;
     return { error => "You must provide a city" } unless $city;
 
-    my $user = User->new;
+    my $user = MovieSuggest::User->new;
     my $response = $user->update_location($username, $region, $city);
     return $response;
 }

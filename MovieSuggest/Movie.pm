@@ -1,4 +1,4 @@
-package Movie;
+package MovieSuggest::Movie;
 
 use strict;
 

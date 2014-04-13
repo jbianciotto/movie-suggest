@@ -1,4 +1,4 @@
-package User;
+package MovieSuggest::User;
 
 use strict;
 

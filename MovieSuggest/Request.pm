@@ -1,4 +1,4 @@
-package Request;
+package MovieSuggest::Request;
 
 use strict;
 
