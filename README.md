@@ -46,7 +46,7 @@ API Specifications:
 
 * User location update  
 	/movie-suggest/update_location  
-	Arguments: username, region, city 
+	Arguments: username, region, city  
 	Updates location for the provided user 
 
 * User genres update  
@@ -61,7 +61,7 @@ API Specifications:
 
 * Get suggestions history  
 	/movie-suggest/history  
-	Arguments: username 
+	Arguments: username   
 	Obtains the history of movies suggestions given to the provided user  
 
 
