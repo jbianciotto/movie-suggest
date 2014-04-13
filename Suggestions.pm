@@ -1,4 +1,4 @@
-package List;
+package Suggestions;
 
 use strict;
 
@@ -38,10 +38,11 @@ sub get_suggestions {
 	my @user_genres = map {$_->description} $user->genres;
 
 	#3) Grab weather conditions
-	my $conditions = Weather->new->get_conditions($location);
+	my $weather = Weather->new;
+	my $conditions = $weather->get_conditions($location);
 
 	#4) Get matching genres for conditions
-	my @condition_genres = Weather->matching_genres($conditions);
+	my @condition_genres = $weather->matching_genres($conditions);
 
 	#5) Intersect user and weather genres
 	my %user_genres=map{$_ =>1} @user_genres;
@@ -157,22 +158,22 @@ sub __filter_movies {
 	my $movies = shift;
 	my $genres = shift;
 
-	my @list;
+	my @movie_list;
 
 	MOVIE: foreach my $movie (@$movies) {
 		foreach my $genre (@$genres) {
 			if ( $movie->is_of_genre($genre) ) {
-				push @list, $movie->format_movie_info;
+				push @movie_list, $movie->format_movie_info;
 				next MOVIE;
 			}
 		}
 	}
 
-	return \@list;
+	return \@movie_list;
 }
 
 #Method: __save_history
-#Arguments: $user, \%conditions, \@list
+#Arguments: $user, \%conditions, \@movie_list
 #Returns: 1
 #Gets the user object, weather conditions hashref and movie list array ref
 #and saves the results into the historical table
@@ -180,7 +181,7 @@ sub __save_history {
 	my $self = shift;
 	my $user = shift;
 	my $conditions = shift;
-	my $list = shift;
+	my $movie_list = shift;
 
 	my $schema = MovieSuggest::Schema->get_schema;
 	my $history_rs = $schema->resultset('History');
@@ -191,9 +192,9 @@ sub __save_history {
 	});
 
 	my $movie_rs = $schema->resultset('Movie');
-	foreach my $movie (@$list) {
+	foreach my $movie (@$movie_list) {
 		my $movie_row = $movie_rs->find_or_create($movie, {key => "movie_id"});
-		$movie_row->add_to_historical($history_row);
+		$movie_row->add_to_histories($history_row);
 	}
 
 	return 1;

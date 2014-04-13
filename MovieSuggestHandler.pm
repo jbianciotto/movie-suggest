@@ -11,7 +11,7 @@ use Apache2::Const -compile => qw(OK);
 use URL::Encode qw(url_params_mixed);
 
 use JSON::Syck;
-use List;
+use Suggestions;
 use User;
 
 
@@ -37,7 +37,7 @@ sub handler {
         $response = {error => "Invalid API method"};
     }
   
-    my $now = DateTime->now(time_zone => "-0300");
+    my $now = DateTime->now(time_zone => 'local' );
     $response->{date} = $now->dmy." ".$now->hms;
 
 	$r->content_type('application/json');
@@ -71,8 +71,8 @@ sub get_history {
     my $username = $args->{username};
     return { error => "You must provide an username" } unless $username;
 
-    my $list = List->new;
-    my $response = $list->get_history($username);
+    my $suggestions = Suggestions->new;
+    my $response = $suggestions->get_history($username);
 
     return $response;
 }
@@ -83,8 +83,8 @@ sub get_suggestions {
     my $username = $args->{username};
     return { error => "You must provide an username" } unless $username;
 
-	my $list = List->new;
-	my $response = $list->get_suggestions($username);
+	my $suggestions = Suggestions->new;
+	my $response = $suggestions->get_suggestions($username);
 
     return $response;
 }
