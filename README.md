@@ -45,7 +45,7 @@ API Specifications:
 
 * User creation  
 	/movie-suggest/create_user  
-	Arguments: username, region, city, genre, [genre...] 
+	Arguments: username, region, city, genre, [genre...]   
 	Returns: newly created user data
 
 			{
@@ -110,34 +110,35 @@ API Specifications:
 * Get suggestions history  
 	/movie-suggest/history  
 	Arguments: username   
-	Returns:   
-			{
-			    "count": <history count>,
-			    "date": <response date>,
-			    "results": [
-			        {
-			            "id": <history id>,
-			            "movie_count": <history movies count>,
-			            "date": <history date>,
-		        		"movies": [
-		            		{
-		                		"movie_id": <movie id>,
-		                		"genres": [
-		                    		<movie_genre>,
-		                    		....
-		                		],
-		                		"title": <movie title>
-		            		},
-		            		...
-		        		], 
-			            "conditions": {
-			                "weather": <history weather>,
-			                "temperature": <history temperature>
-			            }
-			        },
-			        ...
-			    ]
-			}	
+	Returns:
+	   
+		{
+		    "count": <history count>,
+		    "date": <response date>,
+		    "results": [
+		        {
+		            "id": <history id>,
+		            "movie_count": <history movies count>,
+		            "date": <history date>,
+	        		"movies": [
+	            		{
+	                		"movie_id": <movie id>,
+	                		"genres": [
+	                    		<movie_genre>,
+	                    		....
+	                		],
+	                		"title": <movie title>
+	            		},
+	            		...
+	        		], 
+		            "conditions": {
+		                "weather": <history weather>,
+		                "temperature": <history temperature>
+		            }
+		        },
+		        ...
+		    ]
+		}	
 
 	Obtains the history of movies suggestions given to the provided user   
 
