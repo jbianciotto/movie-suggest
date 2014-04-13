@@ -45,27 +45,100 @@ API Specifications:
 
 * User creation  
 	/movie-suggest/create_user  
-	Arguments: username, region, city, genre, [genre...]  
+	Arguments: username, region, city, genre, [genre...] 
+	Returns: newly created user data
+
+			{
+	    		"location": {
+	        		"city": <city>,
+	        		"country/state": <region>
+	    		},
+	    		"date": <response_date>,
+	    		"preferred_genres": [
+	        		<genre>,
+	        		....
+	    		],
+	    		"username": <username>
+			}
+
 	Creates an user and registers its location and preferred genres  
 
 * User location update  
 	/movie-suggest/update_location  
-	Arguments: username, region, city  
+	Arguments: username, region, city    
+	Return: updated user data, see create_user return structure   
 	Updates location for the provided user 
 
 * User genres update  
 	/movie-suggest/update_genres  
-	Arguments: username, genre, [genre...]  
+	Arguments: username, genre, [genre...]   
+	Return: updated user data, see create_user return structure   
 	Updates the preferred genres for the provided user  
 
 * Get movies suggestions  
 	/movie-suggest/suggest  
 	Arguments: username  
+	Returns:  
+
+	    {
+    		"matched_genres": [
+        		<genre>,
+        		.... 
+    		],
+    		"date": <response_date>,
+    		"conditions": {
+        		"weather": <weather>,
+        		"temperature": <temperature>
+    		},
+    		"results": {
+        		"count": <movies_count>,
+        		"movies": [
+            		{
+                		"movie_id": <movie id>,
+                		"genres": [
+                    		<movie_genre>,
+                    		....
+                		],
+                		"title": <movie title>
+            		},
+            		...
+        		]
+    		}
+		}
 	Obtains the movies suggestions for the provided user  
 
 * Get suggestions history  
 	/movie-suggest/history  
 	Arguments: username   
-	Obtains the history of movies suggestions given to the provided user  
+	Returns:   
+			{
+			    "count": <history count>,
+			    "date": <response date>,
+			    "results": [
+			        {
+			            "id": <history id>,
+			            "movie_count": <history movies count>,
+			            "date": <history date>,
+		        		"movies": [
+		            		{
+		                		"movie_id": <movie id>,
+		                		"genres": [
+		                    		<movie_genre>,
+		                    		....
+		                		],
+		                		"title": <movie title>
+		            		},
+		            		...
+		        		], 
+			            "conditions": {
+			                "weather": <history weather>,
+			                "temperature": <history temperature>
+			            }
+			        },
+			        ...
+			    ]
+			}	
+
+	Obtains the history of movies suggestions given to the provided user   
 
 
