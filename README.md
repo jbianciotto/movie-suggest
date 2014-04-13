@@ -8,10 +8,14 @@ Installation instructions
 -----------
 
 ### Pre-requisites  
-* sudo apt-get install apache2 or [here](http://httpd.apache.org/)
-* sudo apt-get install libapache2-mod-perl2 or [here](http://perl.apache.org/docs/2.0/user/intro/start_fast.html)
-* sudo apt-get install mysql-server or [here](http://dev.mysql.com/)
-* sudo apt-get install libdbd-mysql-perl or [here](http://search.cpan.org/CPAN/authors/id/C/CA/CAPTTOFU/DBD-mysql-4.027.tar.gz)
+* Apache2  
+	sudo apt-get install apache2 or [here](http://httpd.apache.org/)
+* mod_perl2 
+	sudo apt-get install libapache2-mod-perl2 or [here](http://perl.apache.org/docs/2.0/user/intro/start_fast.html)
+* Mysql
+	sudo apt-get install mysql-server or [here](http://dev.mysql.com/)
+* DBI mysql driver
+	sudo apt-get install libdbd-mysql-perl or [here](http://search.cpan.org/CPAN/authors/id/C/CA/CAPTTOFU/DBD-mysql-4.027.tar.gz)
 
 ### Installation  
 1. Clone this repo into the folder of your choice
