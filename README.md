@@ -20,6 +20,8 @@ Installation instructions
 	* LWP::Agent  
 	* HTTP::Request  
 	* JSON::Syck  
+	* URL::Encode  
+	* DateTime  
 
 ### Installation  
 1. Clone this repo into the folder of your choice
