@@ -40,13 +40,11 @@ Installation instructions
 	      		Allow from all   
 	    	</Location>  
 
-	2. Create /var/www/movie-suggest/ directory
+    2. Modify apache/movie-suggest file in this repo with the path to apache/startup.pl of this repo, and then copy it to your apache conf.d directory  
 
-    3. Modify apache/movie-suggest file in this repo with the path to apache/startup.pl of this repo, and then copy it to your apache conf.d directory  
+    3. Modify the lib path in apache/startup.pl of this repo so it points to the directory containing this project   
 
-    4. Modify the lib path in apache/startup.pl of this repo so it points to the directory containing this project   
-
-    5. Restart your apache
+    4. Restart your apache
 
 API Specifications:
 -----------
