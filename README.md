@@ -8,11 +8,11 @@ Installation instructions
 -----------
 
 ### Pre-requisites  
-* Apache2  
+* Apache2    
 	sudo apt-get install apache2 or [here](http://httpd.apache.org/)
-* mod_perl2 
+* mod_perl2   
 	sudo apt-get install libapache2-mod-perl2 or [here](http://perl.apache.org/docs/2.0/user/intro/start_fast.html)
-* Mysql
+* Mysql   
 	sudo apt-get install mysql-server or [here](http://dev.mysql.com/)
 * Perl Modules:   
 	* DBD::mysql
@@ -26,7 +26,7 @@ Installation instructions
 ### Installation  
 1. Clone this repo into the folder of your choice
 2. Use the db dump file located in utils/db_dump.sql to recreate the app db
-3. Modify config file conf/movie-suggest.conf with your db credentials
+3. Modify config file MovieSuggest/Config.pm with your db credentials
 4. Apache conf:
 	
 	1. Add the following to your apache sites configuration
