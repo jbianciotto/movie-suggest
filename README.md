@@ -31,7 +31,6 @@ Installation instructions
 	
 	1. Add the following to your apache sites configuration
 
-		    Alias /movie-suggest/ /var/www/movie-suggest/  
 	    	<Location /movie-suggest/>  
 	      		SetHandler perl-script  
 	      		PerlResponseHandler MovieSuggestHandler  
