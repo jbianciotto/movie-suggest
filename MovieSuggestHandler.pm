@@ -11,7 +11,7 @@ use Apache2::Const -compile => qw(OK);
 use URL::Encode qw(url_params_mixed);
 
 use DateTime;
-use JSON::Syck;
+use JSON::XS;
 
 use MovieSuggest::Suggestions;
 use MovieSuggest::User;
@@ -43,7 +43,7 @@ sub handler {
     $response->{date} = $now->dmy." ".$now->hms;
 
 	$r->content_type('application/json');
-	print JSON::Syck::Dump($response);
+	print encode_json($response);
 
 	return Apache2::Const::OK;
 }

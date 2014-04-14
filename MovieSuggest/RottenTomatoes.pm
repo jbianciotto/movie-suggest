@@ -2,7 +2,7 @@ package MovieSuggest::RottenTomatoes;
 
 use strict;
 
-use JSON::Syck;
+use JSON::XS;
 
 use MovieSuggest::Request;
 use MovieSuggest::Movie;
@@ -87,7 +87,7 @@ sub __single_movie_request {
 	$url .= $movie_id.".json?apikey=".ROTTEN_TOMATO_KEY;
 
 	my $response = MovieSuggest::Request->get($url);
-	$response = JSON::Syck::Load($response);
+	$response = decode_json($response);
 
 	return $response;
 }
@@ -109,7 +109,7 @@ sub __all_movies_request {
 		$url .= "&apikey=".ROTTEN_TOMATO_KEY;
 
 		my $response = MovieSuggest::Request->get($url);
-		$response = JSON::Syck::Load($response);
+		$response = decode_json($response);
 
 		push @movies, @{$response->{movies}};
 

@@ -19,7 +19,7 @@ Installation instructions
 	* DBIx::Class  
 	* LWP::Agent  
 	* HTTP::Request  
-	* JSON::Syck  
+	* JSON::XS  
 	* URL::Encode  
 	* DateTime  
 

@@ -3,6 +3,7 @@ package MovieSuggest::Weather;
 use strict;
 
 use MovieSuggest::Request;
+use JSON::XS;
 
 use constant WHEATER_UNDERGROUND_KEY => "a3cd20ad7931f73f";
 use constant WHEATER_CONDITION_BASE_URL => 
@@ -63,21 +64,21 @@ sub get_conditions {
 	my $base_url = WHEATER_CONDITION_BASE_URL;
 	my $url = $base_url . "/q/".$location->region ."/".$location->city.".json"; 
 
-	my $response = MovieSuggest::Request->get($url);
+	my $json_response = MovieSuggest::Request->get($url);
 
-	my $json_response = JSON::Syck::Load($response);
-	if ($json_response->{response}->{results}) {
+	my $response = decode_json($json_response);
+	if ($response->{response}->{results}) {
 		#API returned more than 1 result for the location, get the 1st one
-		$url = $base_url . $json_response->{response}->{results}->[0]->{l}.".json";
-		$response = MovieSuggest::Request->get($url);
-		$json_response = JSON::Syck::Load($response);
+		$url = $base_url . $response->{response}->{results}->[0]->{l}.".json";
+		$json_response = MovieSuggest::Request->get($url);
+		$response = decode_json($json_response);
 	}
 
 	my $conditions;
-	if ($json_response->{response}->{error}) {
-		$conditions = { error => $json_response->{response}->{error} };
+	if ($response->{response}->{error}) {
+		$conditions = { error => $response->{response}->{error} };
 	} else {
-		$conditions = $self->__format_conditions($json_response->{current_observation});
+		$conditions = $self->__format_conditions($response->{current_observation});
 	}
 
 	return $conditions;

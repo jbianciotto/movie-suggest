@@ -4,7 +4,6 @@ use strict;
 
 use HTTP::Request;
 use LWP::UserAgent;
-use JSON::Syck;
 
 sub get {
 	my $class = shift;
