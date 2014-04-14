@@ -16,6 +16,11 @@ Installation instructions
 	sudo apt-get install mysql-server or [here](http://dev.mysql.com/)
 * DBI mysql driver
 	sudo apt-get install libdbd-mysql-perl or [here](http://search.cpan.org/CPAN/authors/id/C/CA/CAPTTOFU/DBD-mysql-4.027.tar.gz)
+* Perl Modules:   
+	* DBIx::Class  
+	* LWP::Agent  
+	* HTTP::Request  
+	* JSON::Syck  
 
 ### Installation  
 1. Clone this repo into the folder of your choice
@@ -23,8 +28,7 @@ Installation instructions
 3. Modify config file conf/movie-suggest.conf with your db credentials
 4. Apache conf:
 	
-	1. Add the following to your sites apache configuration
-
+	1. Add the following to your apache sites configuration
 
 		    Alias /movie-suggest/ /var/www/movie-suggest/  
 	    	<Location /movie-suggest/>  
@@ -36,9 +40,13 @@ Installation instructions
 	      		Allow from all   
 	    	</Location>  
 
-    2. Modify apache/movie-suggest file with the path to apache/startup.pl of this repo, and then copy it to your apache conf.d directory
+	2. Create /var/www/movie-suggest/ directory
 
-    3. Restart your apache
+    3. Modify apache/movie-suggest file in this repo with the path to apache/startup.pl of this repo, and then copy it to your apache conf.d directory  
+
+    4. Modify the lib path in apache/startup.pl of this repo so it points to the directory containing this project   
+
+    5. Restart your apache
 
 API Specifications:
 -----------
