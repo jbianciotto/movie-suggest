@@ -30,7 +30,7 @@ sub get_schema {
 sub __read_conf {
 	my $class = shift;
 
-	open(my $fh, '<', CONF_FILE) || die "Missing configuration file"; 
+	open(my $fh, '<', CONF_FILE) || die "Cant open configuration file : $!"; 
 	my @lines = <$fh>;
 	close($fh);
 
