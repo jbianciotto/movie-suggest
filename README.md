@@ -14,9 +14,8 @@ Installation instructions
 	sudo apt-get install libapache2-mod-perl2 or [here](http://perl.apache.org/docs/2.0/user/intro/start_fast.html)
 * Mysql
 	sudo apt-get install mysql-server or [here](http://dev.mysql.com/)
-* DBI mysql driver
-	sudo apt-get install libdbd-mysql-perl or [here](http://search.cpan.org/CPAN/authors/id/C/CA/CAPTTOFU/DBD-mysql-4.027.tar.gz)
 * Perl Modules:   
+	* DBD::mysql
 	* DBIx::Class  
 	* LWP::Agent  
 	* HTTP::Request  
