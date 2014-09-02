@@ -17,7 +17,7 @@ Installation instructions
 * Perl Modules:   
 	* DBD::mysql
 	* DBIx::Class  
-	* LWP::Agent  
+	* LWP::UserAgent  
 	* HTTP::Request  
 	* JSON::XS  
 	* URL::Encode  
